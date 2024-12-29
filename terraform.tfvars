@@ -2,4 +2,4 @@
 # SPDX-License-Identifier: MPL-2.0
 
 name = "terraform"
-region = "us-east-2"
+region = "us-west-1"
