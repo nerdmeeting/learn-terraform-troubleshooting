@@ -55,24 +55,11 @@ resource "aws_instance" "web_app" {
 
 resource "aws_security_group" "sg_ping" {
   name = "Allow Ping"
-
-  ingress {
-    from_port       = -1
-    to_port         = -1
-    protocol        = "icmp"
-    security_groups = [aws_security_group.sg_8080.id]
-  }
 }
 
 resource "aws_security_group" "sg_8080" {
   name = "Allow 8080"
 
-  ingress {
-    from_port       = 8080
-    to_port         = 8080
-    protocol        = "tcp"
-    security_groups = [aws_security_group.sg_ping.id]
-  }
   // connectivity to ubuntu mirrors is required to run `apt-get update` and `apt-get install apache2`
   egress {
     from_port   = 0
@@ -100,3 +87,20 @@ resource "aws_security_group_rule" "allow_localhost_ping" {
   security_group_id = aws_security_group.sg_ping.id
 }
 
+resource "aws_security_group_rule" "allow_ping" {
+  type = "ingress"
+  from_port = -1
+  to_port = -1
+  protocol = "icmp"
+  security_group_id = aws_security_group.sg_ping.id
+  source_security_group_id = aws_security_group.sg_8080.id
+}
+
+resource "aws_security_group_rule" "allow_8080" {
+  type = "ingress"
+  from_port = 80
+  to_port = 80
+  protocol = "tcp"
+  security_group_id = aws_security_group.sg_8080.id
+  source_security_group_id = aws_security_group.sg_ping.id
+}
