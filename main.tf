@@ -48,8 +48,8 @@ resource "aws_instance" "web_app" {
               echo "Hello World" > /var/www/html/index.html
               systemctl restart apache2
               EOF
- tags = {
-    Name = $var.name-learn
+  tags = {
+    Name = "${var.name}-learn"
   }
 }
 
